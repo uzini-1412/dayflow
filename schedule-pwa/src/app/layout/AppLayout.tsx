@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { useAlarmScheduler, useRealtimePush } from '@features/notifications'
+import { useOfflineSync } from '@shared/lib/offline'
 import { ToastContainer } from '@shared/ui'
 import { BottomTabBar } from './BottomTabBar'
 import { SideNav } from './SideNav'
@@ -10,6 +11,8 @@ export function AppLayout() {
   // 앱이 열려있는 동안 오늘 일정 리마인더 예약 + 실시간 앱내 푸시(토스트)
   useAlarmScheduler()
   useRealtimePush()
+  // 오프라인 동기화: 연결 상태 추적 + 복귀 시 대기열 자동 전송
+  useOfflineSync()
 
   return (
     <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950">

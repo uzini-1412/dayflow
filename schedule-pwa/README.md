@@ -8,7 +8,7 @@
 ## 기술 스택
 - **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, React Router, Zustand
 - **Backend**: PocketBase (로컬 단일 바이너리 · 무료 · 계정 불필요)
-- **PWA**: vite-plugin-pwa (설치형 + 오프라인 + Web Push 예정)
+- **PWA**: vite-plugin-pwa (설치형 + 오프라인 동기화 + Web Push 예정)
 
 ## 주요 특징
 - 📅 달력 / 리스트 / 주간(루틴) 뷰, 일정 CRUD(반복·카테고리·체크리스트·첨부·비용)
@@ -17,6 +17,7 @@
 - 🧩 모듈 토글 — 학생/직장인/미니멀 모드로 기능 on/off (모듈형 아키텍처)
 - 📝 메모 · 🔁 습관 트래커 · 📁 프로젝트 · 🎓 학습 플래너(GPA)
 - 🌙 다크모드·폰트 설정 · 📱 모바일/태블릿/데스크탑 반응형 · 설치형 PWA
+- 📴 오프라인 동기화 — 연결이 끊겨도 조회/생성/수정/삭제 가능, 복귀 시 자동 전송(outbox)
 
 ## 실행 방법
 

@@ -1,4 +1,5 @@
 import { pb } from '@shared/lib/pb'
+import { offlineList, offlineCreate, offlineUpdate, offlineDelete } from '@shared/lib/offline'
 import type { BaseRecord } from '@shared/types/pb.types'
 
 export interface ChecklistItem extends BaseRecord {
@@ -14,14 +15,22 @@ const me = () => pb.authStore.record?.id ?? ''
 
 export const checklistApi = {
   async listBySchedule(scheduleId: string): Promise<ChecklistItem[]> {
-    return pb.collection(COL).getFullList<ChecklistItem>({
-      filter: `schedule = "${scheduleId}"`,
-      sort: 'order,created',
-    })
+    return offlineList<ChecklistItem>(
+      COL,
+      () =>
+        pb.collection(COL).getFullList<ChecklistItem>({
+          filter: `schedule = "${scheduleId}"`,
+          sort: 'order,created',
+        }),
+      {
+        filter: (c) => c.schedule === scheduleId,
+        sort: (a, b) => a.order - b.order || a.created.localeCompare(b.created),
+      },
+    )
   },
 
   async create(scheduleId: string, text: string, order: number): Promise<ChecklistItem> {
-    return pb.collection(COL).create<ChecklistItem>({
+    return offlineCreate<ChecklistItem>(COL, {
       user: me(),
       schedule: scheduleId,
       text,
@@ -31,10 +40,10 @@ export const checklistApi = {
   },
 
   async toggle(id: string, done: boolean): Promise<void> {
-    await pb.collection(COL).update(id, { done })
+    await offlineUpdate<ChecklistItem>(COL, id, { done })
   },
 
   async remove(id: string): Promise<void> {
-    await pb.collection(COL).delete(id)
+    await offlineDelete(COL, id)
   },
 }

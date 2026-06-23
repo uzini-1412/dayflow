@@ -107,6 +107,31 @@ export function CreateScheduleModal({ isOpen, onClose }: ModalBaseProps) {
 - 서버 상태/캐시·실시간 구독은 훅(`useSchedules` 등)에서.
 - 환경변수: `VITE_PB_URL` (`.env`, 절대 하드코딩 금지).
 
+## 6-1. 오프라인 동기화 (offline-first)
+
+연결이 끊겨도 앱이 동작하고, 복귀하면 변경이 자동 전송된다. 전부 `shared/lib/offline/` 에 모여 있고
+feature 의 `*.api.ts` 가 PocketBase 호출을 이 헬퍼로 감싸기만 하면 적용된다.
+
+```
+shared/lib/offline/
+├─ idb.ts           # 의존성 없는 IndexedDB 래퍼 (records 미러 + outbox 큐)
+├─ cache.ts         # 컬렉션 레코드 미러 (키 = `${collection}/${id}`)
+├─ outbox.ts        # 송신 대기열(create/update/delete) + 임시ID 재매핑
+├─ syncEngine.ts    # 온라인 복귀 시 대기열을 seq 순서로 재생(flush)
+├─ events.ts        # 로컬 변경 버스(오프라인 쓰기는 realtime 이 없으므로 직접 신호)
+├─ netStatus.ts     # 연결/동기화 상태 zustand 스토어 + isOnline()
+├─ offlineMutate.ts # offlineList/Create/Update/Delete (api 가 쓰는 래퍼)
+└─ useOfflineSync.ts# 앱 셸 부트스트랩(online/offline 구독 + 자동 flush)
+```
+
+**읽기**: 온라인이면 서버 조회 → 캐시에 적재, 오프라인이면 캐시에서 필터/정렬해 반환.
+**쓰기**: 온라인이면 즉시 PB 호출, 오프라인이면 임시 ID 로 낙관적 레코드를 캐시에 넣고 outbox 에 적재 →
+연결 복귀 시 `flushOutbox()` 가 순서대로 재생(create 성공 시 임시ID→실ID 재매핑, 4xx 는 폐기, 5xx/네트워크는 재시도).
+오프라인 쓰기 직후 `emitChange()` 로 읽기 훅(`useSchedules` 등)을 다시 그린다. 상단바 `SyncIndicator` 가 상태(오프라인·대기 N·동기화 중)를 표시.
+
+> 적용 예: `schedules.api.ts`. 다른 feature 도 `offlineList/Create/Update/Delete` 로 감싸면 동일하게 오프라인 대응됨.
+> SPA 셸은 `sw.ts` 의 NavigationRoute 폴백으로 오프라인에서도 모든 경로가 열린다.
+
 ## 7. 타입
 
 - 전부 TypeScript. `any` 지양.

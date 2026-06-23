@@ -1,0 +1,40 @@
+@import 'tailwindcss';
+
+/* 클래스 기반 다크모드: html.dark 일 때 dark: 변형 활성화 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 디자인 토큰 (폰트는 설정에서 --app-font 변수로 교체) */
+@theme {
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --font-sans: var(--app-font, 'Pretendard', system-ui, sans-serif);
+}
+
+:root {
+  --app-font: 'Pretendard', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--app-font);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 모바일 안전영역(노치) 대응 */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

@@ -1,0 +1,6 @@
+export { SettingsPage } from './pages/SettingsPage'
+export { useSettingsStore, applySettings } from './settings.store'
+export { useModuleEnabled, useActiveModules } from './useModules'
+export { MODULES } from './settings.modules'
+export type { ModuleKey } from './settings.modules'
+export type { Settings, GpaScale } from './settings.types'

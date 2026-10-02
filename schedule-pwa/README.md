@@ -44,10 +44,10 @@ npm run dev          # http://localhost:5173
 | 구분 | 위치 | 방식 |
 |---|---|---|
 | 프론트 | GitHub Pages (`https://<user>.github.io/dayflow/`) | `main` push 시 `.github/workflows/deploy-pages.yml` 이 자동 빌드·배포 |
-| 백엔드 | Oracle Cloud Always Free VM (PocketBase v0.39.4 + Caddy HTTPS) | `deploy/server-setup.sh` 로 설치, 마이그레이션은 기동 시 자동 적용 |
+| 백엔드 | GCP e2-micro VM (us-west1, 무료 등급) — PocketBase v0.39.4 + Caddy(HTTPS 자동) | `https://dayflow.34-168-96-154.sslip.io`, 마이그레이션은 기동 시 자동 적용 |
 
 ### 최초 1회 설정
-1. **백엔드 VM**: Oracle Cloud 에서 Ubuntu VM 생성(보안 목록에 80/443 인바운드 허용) → `deploy/` 와 `pb/pb_migrations/` 를 VM 에 복사 → `sudo bash deploy/server-setup.sh <공인IP를-대시로>.sslip.io` → 출력된 명령으로 관리자(superuser)를 **강한 비밀번호로** 생성.
+1. **백엔드 VM** (Ubuntu, 80/443 허용): `deploy/` 와 `pb/pb_migrations/` 를 VM 에 복사 → `sudo bash server-setup.sh` (최초 1회) → `sudo bash add-pb-app.sh dayflow 8090 dayflow.<IP를-대시로>.sslip.io ./pb_migrations` → 출력된 명령으로 관리자(superuser) 생성. 한 VM 에 앱 이름·포트만 바꿔 여러 프로젝트 백엔드를 추가할 수 있음.
 2. **GitHub 저장소 Settings**
    - Pages → Build and deployment → Source: **GitHub Actions**
    - Secrets and variables → Actions → **Variables** → `VITE_PB_URL` = 백엔드 주소 (예: `https://1-2-3-4.sslip.io`)

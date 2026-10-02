@@ -1,6 +1,8 @@
 # 일정 관리 PWA
 
-일정·달력·소셜 공유를 지원하는 반응형 **PWA**(설치형 웹앱). React + TypeScript + Vite, 백엔드는 로컬 **PocketBase**.
+일정·달력·소셜 공유를 지원하는 반응형 **PWA**(설치형 웹앱). React + TypeScript + Vite, 백엔드는 **PocketBase**.
+
+🔗 **라이브 데모**: https://uzini-1412.github.io/dayflow/
 
 > 학부 소프트웨어공학 팀플(일정관리 SRS)을 기반으로, 당시 미구현 상태였던 핵심 기능을
 > 현재 실력으로 직접 설계·구현한 개인 리메이크 프로젝트입니다.

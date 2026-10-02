@@ -10,6 +10,7 @@ const MAX_DELAY = 2 ** 31 - 1
 /**
  * 앱이 열려있는 동안 오늘 일정의 리마인더(N분 전)를 setTimeout 으로 예약 → 인앱 토스트.
  * (DB 알림 생성/OS 알림은 푸시 워커가 담당 — 중복 방지를 위해 여기선 토스트만)
+ * 푸시 워커는 현재 배포에서 비활성화 상태이므로, 배포본의 리마인더는 이 인앱 토스트만 동작한다.
  */
 export function useAlarmScheduler() {
   const alarmEnabled = useSettingsStore((s) => s.settings.alarmEnabled)

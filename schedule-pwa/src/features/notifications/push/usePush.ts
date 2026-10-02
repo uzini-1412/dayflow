@@ -19,7 +19,10 @@ export function pushSupported(): boolean {
   return 'serviceWorker' in navigator && 'PushManager' in window
 }
 
-/** Web Push 구독/해제 (서비스워커 pushManager + 서버 저장) */
+/**
+ * Web Push 구독/해제 (서비스워커 pushManager + 서버 저장)
+ * [비활성화] 현재 배포에서는 발송 워커가 없어 UI(PushToggle)에서 호출하지 않는다. README "비활성화된 기능" 참고
+ */
 export function usePush() {
   const subscribe = useCallback(async () => {
     if (!pushSupported()) throw new Error('이 브라우저는 푸시를 지원하지 않습니다.')

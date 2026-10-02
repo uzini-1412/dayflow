@@ -98,7 +98,7 @@ export function CreateScheduleModal({ isOpen, onClose }: ModalBaseProps) {
 - **모바일 우선** + 태블릿/데스크탑 분기. Tailwind 브레이크포인트: `sm`(모바일) `md`(태블릿) `lg`(데스크탑).
 - 모달: 모바일=바텀시트, `md`↑=센터 다이얼로그.
 - 네비: 모바일=하단 탭바, `md`↑=사이드바.
-- PWA: `vite-plugin-pwa` (manifest + service worker), 설치 가능 + 오프라인 캐시 + Web Push.
+- PWA: `vite-plugin-pwa` (manifest + service worker), 설치 가능 + 오프라인 캐시. (Web Push는 구현돼 있으나 배포에서 비활성화 — README 참고)
 
 ## 6. 데이터 레이어
 

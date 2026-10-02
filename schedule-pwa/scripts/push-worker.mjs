@@ -2,6 +2,8 @@
 //  매 주기마다: (1) 다가온 일정의 리마인더 알림 생성  (2) 미발송 알림을 구독 기기로 Web Push 발송
 // Node 에 EventSource 가 없어 realtime 대신 폴링을 사용한다.
 // 실행: npm run push  (node --env-file=.env scripts/push-worker.mjs)
+// [비활성화] 배포 환경(PocketHost)에는 상시 Node 프로세스를 띄울 수 없어 현재 배포에서 사용하지 않음.
+//  로컬에서는 그대로 실행 가능. README "비활성화된 기능" 참고
 import webpush from 'web-push'
 import PocketBase from 'pocketbase'
 

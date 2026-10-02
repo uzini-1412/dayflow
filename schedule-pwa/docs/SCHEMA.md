@@ -149,7 +149,8 @@ type RepeatRule = {
 | p256dh `*` / auth `*` | text | 암호화 키 |
 | user_agent | text | 기기 식별 |
 
-> 서버측 발송은 PocketBase 훅(JS) 또는 별도 워커에서 `web-push`로 처리(2차).
+> 서버측 발송은 별도 워커(`scripts/push-worker.mjs`)에서 `web-push`로 처리.
+> **현재 배포에서는 비활성화** — 컬렉션은 유지하되 클라이언트 구독 UI를 숨김(README "비활성화된 기능" 참고).
 
 ---
 

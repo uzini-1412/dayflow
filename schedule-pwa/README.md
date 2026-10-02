@@ -8,11 +8,11 @@
 ## 기술 스택
 - **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, React Router, Zustand
 - **Backend**: PocketBase (로컬 단일 바이너리 · 무료 · 계정 불필요)
-- **PWA**: vite-plugin-pwa (설치형 + 오프라인 동기화 + Web Push 예정)
+- **PWA**: vite-plugin-pwa (설치형 + 오프라인 동기화)
 
 ## 주요 특징
 - 📅 달력 / 리스트 / 주간(루틴) 뷰, 일정 CRUD(반복·카테고리·체크리스트·첨부·비용)
-- 🔔 알람 — 인앱 실시간 토스트(SSE) + Web Push(앱 닫혀도)
+- 🔔 알람 — 인앱 실시간 토스트(SSE) · 일정 리마인더
 - 👥 협업 — 친구 · 일정 공유 · 일정 단위 실시간 댓글 · 공유 스페이스(그룹 캘린더)
 - 🧩 모듈 토글 — 학생/직장인/미니멀 모드로 기능 on/off (모듈형 아키텍처)
 - 📝 메모 · 🔁 습관 트래커 · 📁 프로젝트 · 🎓 학습 플래너(GPA)
@@ -40,13 +40,18 @@ npm run pb           # http://127.0.0.1:8090 에서 서버 실행
 npm run dev          # http://localhost:5173
 ```
 
-### 4. (선택) Web Push 발송 워커 (터미널 3)
-> 앱이 닫혀 있어도 친구 요청·공유·댓글 등의 알림을 기기로 푸시. VAPID 키를 `.env` 에 설정 후 실행.
-```bash
-npx web-push generate-vapid-keys   # 키 생성 → .env 의 VITE_VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY 에 입력
-npm run push                       # 알림 생성 시 구독 기기로 Web Push 발송
-```
-- 흐름: 클라이언트가 `pushManager` 로 구독 → `push_subscriptions` 저장 → 알림 생성 시 워커가 `web-push` 로 발송 → 서비스워커(`src/sw.ts`)가 알림 표시·클릭 시 딥링크.
+## 비활성화된 기능
+
+### Web Push (앱을 닫아도 오는 기기 알림) — 현재 비활성화
+- **이유**: 배포 백엔드(PocketHost)는 PocketBase만 호스팅하며, 푸시 발송에 필요한 상시 Node 워커(`scripts/push-worker.mjs`)를 띄울 수 없음.
+- **영향**: 앱을 연 상태의 인앱 실시간 알림(친구 요청·공유·댓글 토스트, 일정 리마인더 토스트)은 그대로 동작. 앱을 닫았을 때의 OS 푸시만 동작하지 않음.
+- **처리**: 설정 화면의 "푸시 알림" 토글만 주석 처리(`src/features/settings/pages/SettingsPage.tsx`). 구독 로직(`features/notifications/push`), 서비스워커 `push` 핸들러(`src/sw.ts`), `push_subscriptions` 컬렉션, 워커 코드는 삭제하지 않고 유지.
+- **재활성화 방법**
+  1. 워커를 상시 실행할 수 있는 서버(Fly.io, VPS 등)에 PocketBase와 워커를 함께 배포
+  2. `npx web-push generate-vapid-keys` 로 키 생성 → `.env` 의 `VITE_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` 에 입력
+  3. `SettingsPage.tsx` 의 `PushToggle` import와 "푸시 알림" 설정 행 주석 해제
+  4. `npm run push` 로 워커 실행
+  - 흐름: `pushManager` 구독 → `push_subscriptions` 저장 → 워커가 `web-push` 로 발송 → `src/sw.ts` 가 알림 표시·클릭 시 딥링크
 
 ## 문서
 - [docs/SCHEMA.md](docs/SCHEMA.md) — DB 스키마 설계 (PocketBase 컬렉션)

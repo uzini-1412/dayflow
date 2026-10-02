@@ -11,7 +11,8 @@ if (!url) {
   console.warn('[pb] VITE_PB_URL 이 설정되지 않았습니다. .env 를 확인하세요.')
 }
 
-export const pb = new PocketBase(url ?? 'http://127.0.0.1:8090')
+// 빈 문자열('')도 미설정으로 취급 — 빈 URL 이면 SDK 가 현재 페이지 origin 으로 요청함
+export const pb = new PocketBase(url || 'http://127.0.0.1:8090')
 
 // 인증 자동 갱신은 authStore 가 처리. 토큰은 localStorage 에 보존됨.
 export type Pb = typeof pb

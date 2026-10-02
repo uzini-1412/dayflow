@@ -4,8 +4,12 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'node:path'
 
+// 배포 하위 경로. GitHub Pages 는 '/dayflow/' (워크플로에서 VITE_BASE 로 주입), 로컬/루트 배포는 '/'
+const base = process.env.VITE_BASE ?? '/'
+
 // https://vite.dev/config/
 export default defineConfig({
+  base,
   plugins: [
     react(),
     tailwindcss(),
@@ -14,7 +18,7 @@ export default defineConfig({
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'sw.ts',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['app-icon.svg', 'favicon.ico', 'apple-touch-icon-180x180.png'],
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
       },
@@ -25,11 +29,14 @@ export default defineConfig({
         theme_color: '#4f46e5',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/',
+        start_url: base,
+        scope: base,
         icons: [
-          { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          // public/app-icon.svg 에서 생성: npx @vite-pwa/assets-generator --preset minimal-2023 public/app-icon.svg
+          { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
+          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       devOptions: { enabled: false, type: 'module' },

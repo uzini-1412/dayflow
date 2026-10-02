@@ -16,7 +16,7 @@ export async function showLocalNotification(
   if ('serviceWorker' in navigator) {
     const reg = await navigator.serviceWorker.getRegistration()
     if (reg) {
-      await reg.showNotification(title, { icon: '/pwa-192.png', ...options })
+      await reg.showNotification(title, { icon: `${import.meta.env.BASE_URL}pwa-192x192.png`, ...options })
       return
     }
   }

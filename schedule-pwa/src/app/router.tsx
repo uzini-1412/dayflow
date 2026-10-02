@@ -63,4 +63,7 @@ export const router = createBrowserRouter([
     ],
   },
   { path: '*', element: <Navigate to={ROUTES.home} replace /> },
-])
+], {
+  // 하위 경로 배포(GitHub Pages: /dayflow/) 대응. 끝 슬래시는 제거해야 '/dayflow' 진입도 매칭됨
+  basename: import.meta.env.BASE_URL.replace(/\/$/, '') || '/',
+})

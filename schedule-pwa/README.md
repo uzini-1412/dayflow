@@ -40,6 +40,22 @@ npm run pb           # http://127.0.0.1:8090 에서 서버 실행
 npm run dev          # http://localhost:5173
 ```
 
+## 배포
+| 구분 | 위치 | 방식 |
+|---|---|---|
+| 프론트 | GitHub Pages (`https://<user>.github.io/dayflow/`) | `main` push 시 `.github/workflows/deploy-pages.yml` 이 자동 빌드·배포 |
+| 백엔드 | PocketHost (PocketBase v0.39.x) | `pb/pb_migrations` 업로드 후 자동 적용 |
+
+### 최초 1회 설정
+1. **PocketHost**: [pockethost.io](https://pockethost.io) 에서 인스턴스 생성(버전 v0.39.x) → FTP/대시보드로 `pb/pb_migrations/*.js` 를 인스턴스의 `pb_migrations/` 에 업로드 → 인스턴스 재시작 → 관리자(superuser) 계정을 **강한 비밀번호로** 생성.
+2. **GitHub 저장소 Settings**
+   - Pages → Build and deployment → Source: **GitHub Actions**
+   - Secrets and variables → Actions → **Variables** → `VITE_PB_URL` = PocketHost 주소 (예: `https://dayflow.pockethost.io`)
+3. `main` 에 push(또는 Actions 탭에서 수동 실행) → 배포 완료.
+
+- 하위 경로 대응: 빌드 시 `VITE_BASE=/dayflow/` 로 Vite `base`·라우터 `basename`·manifest `scope` 를 맞춤. 로컬 개발은 기본값 `/`.
+- 새로고침 404 대응: 빌드 결과 `index.html` 을 `404.html` 로 복사.
+
 ## 비활성화된 기능
 
 ### Web Push (앱을 닫아도 오는 기기 알림) — 현재 비활성화

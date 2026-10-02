@@ -6,6 +6,10 @@ declare let self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: Array<{ url: string; revision: string | null }>
 }
 
+// 서비스워커 scope 경로 (루트 배포 '/', GitHub Pages '/dayflow/') — 앱 내 경로를 여기에 붙여 사용
+const BASE = new URL(self.registration.scope).pathname
+const withBase = (p: string) => BASE + p.replace(/^\//, '')
+
 // 빌드시 주입되는 프리캐시 매니페스트
 precacheAndRoute(self.__WB_MANIFEST)
 
@@ -42,9 +46,9 @@ self.addEventListener('push', (event: PushEvent) => {
       if (focused) return
       return self.registration.showNotification(title, {
         body: data.body ?? '',
-        icon: '/pwa-192.png',
-        badge: '/pwa-192.png',
-        data: { link: data.link ?? '/' },
+        icon: withBase('pwa-192x192.png'),
+        badge: withBase('pwa-192x192.png'),
+        data: { link: withBase(data.link ?? '/') },
       })
     }),
   )
@@ -53,7 +57,7 @@ self.addEventListener('push', (event: PushEvent) => {
 // 알림 클릭 → 해당 일정으로 이동(딥링크)
 self.addEventListener('notificationclick', (event: NotificationEvent) => {
   event.notification.close()
-  const link = (event.notification.data?.link as string) ?? '/'
+  const link = (event.notification.data?.link as string) ?? BASE
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
       for (const client of clients) {

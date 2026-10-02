@@ -1,0 +1,61 @@
+# 프론트(schedule-pwa)를 GitHub Pages 에 배포
+# 필요 설정 (저장소 Settings):
+#  - Pages > Build and deployment > Source: "GitHub Actions"
+#  - Secrets and variables > Actions > Variables > VITE_PB_URL = PocketHost 주소 (예: https://dayflow.pockethost.io)
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ['schedule-pwa/**', '.github/workflows/deploy-pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: schedule-pwa
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: schedule-pwa/package-lock.json
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # https://<user>.github.io/<repo>/ 하위 경로로 서비스됨
+          VITE_BASE: /${{ github.event.repository.name }}/
+          VITE_PB_URL: ${{ vars.VITE_PB_URL }}
+
+      # SPA 딥링크 새로고침 대응: 없는 경로는 Pages 가 404.html 을 내려주므로 index.html 과 동일하게
+      - run: cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: schedule-pwa/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

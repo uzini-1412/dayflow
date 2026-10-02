@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { cn } from '@shared/lib/cn'
 import { ROUTES } from '@shared/lib/routes'
-import { useAuth } from '@features/auth'
+import { openAuthModal, useAuth } from '@features/auth'
 import { Button } from '@shared/ui'
 import { useVisibleNav } from './navItems'
 
@@ -34,10 +34,18 @@ export function SideNav() {
         ))}
       </nav>
       <div className="mt-auto border-t border-zinc-100 pt-3 dark:border-zinc-800">
-        <p className="truncate px-2 text-sm text-zinc-500">{user?.nickname ?? user?.name}</p>
-        <Button variant="ghost" size="sm" fullWidth className="mt-1 justify-start" onClick={logout}>
-          로그아웃
-        </Button>
+        {user ? (
+          <>
+            <p className="truncate px-2 text-sm text-zinc-500">{user.nickname ?? user.name}</p>
+            <Button variant="ghost" size="sm" fullWidth className="mt-1 justify-start" onClick={logout}>
+              로그아웃
+            </Button>
+          </>
+        ) : (
+          <Button size="sm" fullWidth onClick={() => openAuthModal('login')}>
+            로그인 / 회원가입
+          </Button>
+        )}
       </div>
     </aside>
   )

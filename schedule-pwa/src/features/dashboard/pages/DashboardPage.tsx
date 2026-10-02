@@ -1,4 +1,4 @@
-import { useAuth } from '@features/auth'
+import { openAuthModal, useAuth } from '@features/auth'
 import { useModuleEnabled } from '@features/settings'
 import {
   ScheduleFormModal,
@@ -25,11 +25,26 @@ export function DashboardPage() {
       <div className="flex items-end justify-between">
         <div>
           <p className="text-sm text-zinc-500">
-            안녕하세요, {user?.nickname ?? user?.name}님 👋
+            {user ? `안녕하세요, ${user.nickname || user.name}님 👋` : '둘러보는 중이에요 👀'}
           </p>
           <Clock />
         </div>
       </div>
+
+      {!user && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+          <p className="text-sm text-zinc-700 dark:text-zinc-200">
+            로그인하면 일정·메모를 저장할 수 있어요. 데모 계정으로 바로 체험해 볼 수도 있어요.
+          </p>
+          <button
+            type="button"
+            onClick={() => openAuthModal('login')}
+            className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
+          >
+            시작하기
+          </button>
+        </div>
+      )}
 
       <blockquote className="rounded-xl bg-zinc-100 px-4 py-3 text-sm text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
         “{quote.text}” <span className="text-zinc-400">— {quote.author}</span>

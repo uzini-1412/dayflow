@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ROUTES } from '@shared/lib/routes'
-import { LoginPage, RegisterPage } from '@features/auth'
 import { SettingsPage } from '@features/settings'
 import { CalendarPage } from '@features/calendar'
 import { ListPage } from '@features/schedules'
@@ -14,51 +13,47 @@ import { ProjectsPage } from '@features/projects'
 import { SpacesPage } from '@features/spaces'
 import { AppLayout } from './layout/AppLayout'
 import { MorePage } from './pages/MorePage'
-import { ProtectedRoute } from './ProtectedRoute'
+import { AuthRedirect } from './AuthRedirect'
 import { ModuleRoute } from './ModuleRoute'
 
 export const router = createBrowserRouter([
-  { path: ROUTES.login, element: <LoginPage /> },
-  { path: ROUTES.register, element: <RegisterPage /> },
+  { path: ROUTES.login, element: <AuthRedirect mode="login" /> },
+  { path: ROUTES.register, element: <AuthRedirect mode="register" /> },
   {
-    element: <ProtectedRoute />,
+    // 로그인 없이 둘러보기 가능 — 쓰기 동작만 로그인 모달로 가드 (useRequireAuth + API 안전망)
+    element: <AppLayout />,
     children: [
+      { path: ROUTES.home, element: <DashboardPage /> },
+      { path: ROUTES.calendar, element: <CalendarPage /> },
+      { path: ROUTES.list, element: <ListPage /> },
+      { path: ROUTES.more, element: <MorePage /> },
+      { path: ROUTES.settings, element: <SettingsPage /> },
       {
-        element: <AppLayout />,
+        element: <ModuleRoute module="friends" />,
         children: [
-          { path: ROUTES.home, element: <DashboardPage /> },
-          { path: ROUTES.calendar, element: <CalendarPage /> },
-          { path: ROUTES.list, element: <ListPage /> },
-          { path: ROUTES.more, element: <MorePage /> },
-          { path: ROUTES.settings, element: <SettingsPage /> },
-          {
-            element: <ModuleRoute module="friends" />,
-            children: [
-              { path: ROUTES.social, element: <SocialPage /> },
-              { path: ROUTES.spaces, element: <SpacesPage /> },
-            ],
-          },
-          {
-            element: <ModuleRoute module="memo" />,
-            children: [{ path: ROUTES.memos, element: <MemosPage /> }],
-          },
-          {
-            element: <ModuleRoute module="timetable" />,
-            children: [{ path: ROUTES.timetable, element: <TimetablePage /> }],
-          },
-          {
-            element: <ModuleRoute module="grades" />,
-            children: [{ path: ROUTES.tracker, element: <TrackerPage /> }],
-          },
-          {
-            element: <ModuleRoute module="habits" />,
-            children: [{ path: ROUTES.habits, element: <HabitsPage /> }],
-          },
-          {
-            element: <ModuleRoute module="projects" />,
-            children: [{ path: ROUTES.projects, element: <ProjectsPage /> }],
-          },
+          { path: ROUTES.social, element: <SocialPage /> },
+          { path: ROUTES.spaces, element: <SpacesPage /> },
         ],
+      },
+      {
+        element: <ModuleRoute module="memo" />,
+        children: [{ path: ROUTES.memos, element: <MemosPage /> }],
+      },
+      {
+        element: <ModuleRoute module="timetable" />,
+        children: [{ path: ROUTES.timetable, element: <TimetablePage /> }],
+      },
+      {
+        element: <ModuleRoute module="grades" />,
+        children: [{ path: ROUTES.tracker, element: <TrackerPage /> }],
+      },
+      {
+        element: <ModuleRoute module="habits" />,
+        children: [{ path: ROUTES.habits, element: <HabitsPage /> }],
+      },
+      {
+        element: <ModuleRoute module="projects" />,
+        children: [{ path: ROUTES.projects, element: <ProjectsPage /> }],
       },
     ],
   },

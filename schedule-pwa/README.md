@@ -2,7 +2,7 @@
 
 일정·달력·소셜 공유를 지원하는 반응형 **PWA**(설치형 웹앱). React + TypeScript + Vite, 백엔드는 **PocketBase**.
 
-🔗 **라이브 데모**: https://uzini-1412.github.io/dayflow/
+🔗 **라이브 데모**: https://uzini-1412.github.io/dayflow/ — 로그인 없이 둘러보기 가능, "데모 계정으로 체험하기"로 샘플 데이터 체험
 
 > 학부 소프트웨어공학 팀플(일정관리 SRS)을 기반으로, 당시 미구현 상태였던 핵심 기능을
 > 현재 실력으로 직접 설계·구현한 개인 리메이크 프로젝트입니다.
@@ -20,6 +20,7 @@
 - 📝 메모 · 🔁 습관 트래커 · 📁 프로젝트 · 🎓 학습 플래너(GPA)
 - 🌙 다크모드·폰트 설정 · 📱 모바일/태블릿/데스크탑 반응형 · 설치형 PWA
 - 📴 오프라인 동기화 — 연결이 끊겨도 조회/생성/수정/삭제 가능, 복귀 시 자동 전송(outbox)
+- 👀 둘러보기 모드 — 비로그인으로 모든 화면 열람, 저장 동작 시에만 로그인 모달(페이지 이동 없음) · 이메일+비밀번호 간편 가입
 
 ## 실행 방법
 
@@ -50,10 +51,11 @@ npm run dev          # http://localhost:5173
 
 ### 최초 1회 설정
 1. **백엔드 VM** (Ubuntu, 80/443 허용): `deploy/` 와 `pb/pb_migrations/` 를 VM 에 복사 → `sudo bash server-setup.sh` (최초 1회) → `sudo bash add-pb-app.sh dayflow 8090 dayflow.<IP를-대시로>.sslip.io ./pb_migrations` → 출력된 명령으로 관리자(superuser) 생성. 한 VM 에 앱 이름·포트만 바꿔 여러 프로젝트 백엔드를 추가할 수 있음.
-2. **GitHub 저장소 Settings**
+2. **데모 계정**: `node scripts/seed-demo.mjs <백엔드URL>` — 공용 데모 계정 생성 및 샘플 데이터 초기화(재실행 시 리셋). 비밀번호 변경·탈퇴는 서버 규칙으로 차단.
+3. **GitHub 저장소 Settings**
    - Pages → Build and deployment → Source: **GitHub Actions**
    - Secrets and variables → Actions → **Variables** → `VITE_PB_URL` = 백엔드 주소 (예: `https://1-2-3-4.sslip.io`)
-3. `main` 에 push(또는 Actions 탭에서 수동 실행) → 배포 완료.
+4. `main` 에 push(또는 Actions 탭에서 수동 실행) → 배포 완료.
 
 - 하위 경로 대응: 빌드 시 `VITE_BASE=/dayflow/` 로 Vite `base`·라우터 `basename`·manifest `scope` 를 맞춤. 로컬 개발은 기본값 `/`.
 - 새로고침 404 대응: 빌드 결과 `index.html` 을 `404.html` 로 복사.

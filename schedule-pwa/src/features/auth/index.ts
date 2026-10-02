@@ -1,5 +1,6 @@
 export { AuthProvider } from './AuthProvider'
 export { useAuth } from './useAuth'
+export { useRequireAuth } from './useRequireAuth'
+export { openAuthModal, useAuthModal, type AuthModalMode } from './authModal.store'
+export { isDemoUser } from './auth.demo'
 export { accountApi } from './account.api'
-export { LoginPage } from './pages/LoginPage'
-export { RegisterPage } from './pages/RegisterPage'

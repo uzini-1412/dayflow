@@ -1,20 +1,23 @@
 import { useCallback, useState } from 'react'
 import { useDisclosure } from '@shared/hooks/useDisclosure'
+import { useRequireAuth } from '@features/auth'
 import type { Schedule } from '../schedules.types'
 
-/** 일정 추가/수정 모달 상태 관리 (리스트·달력 공용) */
+/** 일정 추가/수정 모달 상태 관리 (리스트·달력 공용). 추가는 로그인 필요 */
 export function useScheduleEditor() {
   const modal = useDisclosure()
+  const requireAuth = useRequireAuth()
   const [selected, setSelected] = useState<Schedule | null>(null)
   const [defaultStart, setDefaultStart] = useState<string | undefined>(undefined)
 
   const openCreate = useCallback(
-    (startISO?: string) => {
-      setSelected(null)
-      setDefaultStart(startISO)
-      modal.open()
-    },
-    [modal],
+    (startISO?: string) =>
+      requireAuth(() => {
+        setSelected(null)
+        setDefaultStart(startISO)
+        modal.open()
+      }, '일정을 추가하려면 로그인이 필요해요.')(),
+    [modal, requireAuth],
   )
 
   const openEdit = useCallback(

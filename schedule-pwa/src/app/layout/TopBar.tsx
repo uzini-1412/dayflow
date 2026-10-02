@@ -1,4 +1,5 @@
 import { useDisclosure } from '@shared/hooks/useDisclosure'
+import { openAuthModal, useAuth } from '@features/auth'
 import { NotificationBell } from '@features/notifications'
 import { ScheduleSearchModal } from '@features/schedules'
 import { SyncIndicator } from './SyncIndicator'
@@ -6,6 +7,7 @@ import { SyncIndicator } from './SyncIndicator'
 /** 상단바: 모바일 헤더 겸 검색·알림 위치 */
 export function TopBar() {
   const search = useDisclosure()
+  const { isAuthenticated } = useAuth()
 
   return (
     <header className="sticky top-0 z-20 flex h-12 items-center justify-between border-b border-zinc-200 bg-white/80 px-3 backdrop-blur md:justify-end dark:border-zinc-800 dark:bg-zinc-900/80">
@@ -20,7 +22,17 @@ export function TopBar() {
         >
           🔍
         </button>
-        <NotificationBell />
+        {isAuthenticated ? (
+          <NotificationBell />
+        ) : (
+          <button
+            type="button"
+            onClick={() => openAuthModal('login')}
+            className="ml-1 rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700 md:hidden"
+          >
+            로그인
+          </button>
+        )}
       </div>
       <ScheduleSearchModal isOpen={search.isOpen} onClose={search.close} />
     </header>

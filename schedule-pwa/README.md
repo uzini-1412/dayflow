@@ -44,13 +44,13 @@ npm run dev          # http://localhost:5173
 | 구분 | 위치 | 방식 |
 |---|---|---|
 | 프론트 | GitHub Pages (`https://<user>.github.io/dayflow/`) | `main` push 시 `.github/workflows/deploy-pages.yml` 이 자동 빌드·배포 |
-| 백엔드 | PocketHost (PocketBase v0.39.x) | `pb/pb_migrations` 업로드 후 자동 적용 |
+| 백엔드 | Oracle Cloud Always Free VM (PocketBase v0.39.4 + Caddy HTTPS) | `deploy/server-setup.sh` 로 설치, 마이그레이션은 기동 시 자동 적용 |
 
 ### 최초 1회 설정
-1. **PocketHost**: [pockethost.io](https://pockethost.io) 에서 인스턴스 생성(버전 v0.39.x) → FTP/대시보드로 `pb/pb_migrations/*.js` 를 인스턴스의 `pb_migrations/` 에 업로드 → 인스턴스 재시작 → 관리자(superuser) 계정을 **강한 비밀번호로** 생성.
+1. **백엔드 VM**: Oracle Cloud 에서 Ubuntu VM 생성(보안 목록에 80/443 인바운드 허용) → `deploy/` 와 `pb/pb_migrations/` 를 VM 에 복사 → `sudo bash deploy/server-setup.sh <공인IP를-대시로>.sslip.io` → 출력된 명령으로 관리자(superuser)를 **강한 비밀번호로** 생성.
 2. **GitHub 저장소 Settings**
    - Pages → Build and deployment → Source: **GitHub Actions**
-   - Secrets and variables → Actions → **Variables** → `VITE_PB_URL` = PocketHost 주소 (예: `https://dayflow.pockethost.io`)
+   - Secrets and variables → Actions → **Variables** → `VITE_PB_URL` = 백엔드 주소 (예: `https://1-2-3-4.sslip.io`)
 3. `main` 에 push(또는 Actions 탭에서 수동 실행) → 배포 완료.
 
 - 하위 경로 대응: 빌드 시 `VITE_BASE=/dayflow/` 로 Vite `base`·라우터 `basename`·manifest `scope` 를 맞춤. 로컬 개발은 기본값 `/`.
@@ -59,7 +59,7 @@ npm run dev          # http://localhost:5173
 ## 비활성화된 기능
 
 ### Web Push (앱을 닫아도 오는 기기 알림) — 현재 비활성화
-- **이유**: 배포 백엔드(PocketHost)는 PocketBase만 호스팅하며, 푸시 발송에 필요한 상시 Node 워커(`scripts/push-worker.mjs`)를 띄울 수 없음.
+- **이유**: 처음 배포 대상(PocketHost)에서는 푸시 발송용 상시 Node 워커(`scripts/push-worker.mjs`)를 띄울 수 없어 비활성화. 현재 VM 에서는 워커 실행이 가능하므로 필요 시 재활성화 가능.
 - **영향**: 앱을 연 상태의 인앱 실시간 알림(친구 요청·공유·댓글 토스트, 일정 리마인더 토스트)은 그대로 동작. 앱을 닫았을 때의 OS 푸시만 동작하지 않음.
 - **처리**: 설정 화면의 "푸시 알림" 토글만 주석 처리(`src/features/settings/pages/SettingsPage.tsx`). 구독 로직(`features/notifications/push`), 서비스워커 `push` 핸들러(`src/sw.ts`), `push_subscriptions` 컬렉션, 워커 코드는 삭제하지 않고 유지.
 - **재활성화 방법**
